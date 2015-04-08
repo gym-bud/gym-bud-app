@@ -1,2 +1,8 @@
 #! /bin/sh
-echo "hello world"
+read -p "Do you want to commit your changes to the test db?" -n 1 -r
+echo    # (optional) move to a new line
+if [[ $REPLY =~ ^[Yy]$ ]]
+then
+   mysqldump -u testroot -ppass gb_test > ../mysql/gb_test.sql
+   git add ../mysql/gb_test.sql
+fi
