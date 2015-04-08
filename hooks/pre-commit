@@ -1,4 +1,6 @@
 #! /bin/bash
-pwd
+echo "moving test db dump to .old..."
+mv ./mysql/gb_test/sql ./mysql/gb_test.sql.old #in case a mistake was made
+echo "creating new test db dump..."
 mysqldump -u testroot -ppass gb_test > ./mysql/gb_test.sql
 git add ./mysql/gb_test.sql

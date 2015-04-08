@@ -1,0 +1,3 @@
+#! /bin/sh
+echo "updating test database..."
+mysql -u testroot -ppass gb_test < ./mysql/gb_test.sql
