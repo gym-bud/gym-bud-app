@@ -1,0 +1,27 @@
+{
+  "name": "gym-bud-app",
+  "version": "0.0.1",
+  "description": "gym-bud",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/gym-bud/gym-bud-app.git"
+  },
+  "keywords": [
+    "gymbud"
+  ],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/gym-bud/gym-bud-app/issues"
+  },
+  "homepage": "https://github.com/gym-bud/gym-bud-app",
+  "dependencies": {
+    "express": "^4.12.3",
+    "gulp": "^3.8.11",
+    "jade": "^1.9.2"
+  }
+}
