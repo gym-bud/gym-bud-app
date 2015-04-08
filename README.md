@@ -1,1 +1,1 @@
-# gym-buddy-node
+# gym-bud-node
