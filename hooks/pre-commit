@@ -1,4 +1,4 @@
-#! /bin/sh
+#! /bin/bash
 read -p "Do you want to commit your changes to the test db?" -n 1 -r
 echo    # (optional) move to a new line
 if [[ $REPLY =~ ^[Yy]$ ]]
