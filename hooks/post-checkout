@@ -1,3 +1,6 @@
-#! /bin/sh
-echo "updating test database..."
-mysql -u testroot -ppass gb_test < ./mysql/gb_test.sql
+#! /bin/bash
+exec < /dev/tty #allows stdin for hooks
+read -p "re-init test database to contents of mysql/gb_test.sql? [yN] " -n 1 -r
+if [[ $REPLY =~ ^[Yy]$ ]]; then
+   mysql -u testroot -ppass gb_test < ./mysql/gb_test.sql
+fi

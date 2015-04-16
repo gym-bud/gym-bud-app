@@ -1,3 +1,4 @@
 *.swp
 *.swo
 mysql/gb_test.sql.old
+server/node_modules
