@@ -1,3 +1,8 @@
+//sets environmental variables... should happen before anything else
+require('./modules/env.js').set();
+
+var db = require("./modules/db.js");
+
 var express = require('express');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
@@ -9,6 +14,7 @@ var bcrypt = require('bcrypt-nodejs');
 
 var usersById = {};
 var nextUserId = 0;
+
 
 function addUser( user ) {
 

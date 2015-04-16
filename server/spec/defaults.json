@@ -1,0 +1,21 @@
+{
+   "defaultEnvironment": "development",
+   "development": {
+      "GB_MYSQL_HOST": "0.0.0.0",
+      "GB_MYSQL_USERNAME": "testroot",
+      "GB_MYSQL_PASSWORD": "pass",
+      "GB_MYSQL_DATABASE": "gb_test"
+   },
+   "blippity": {
+      "GB_MYSQL_HOST": "0.0.0.0",
+      "GB_MYSQL_USERNAME": "testroot",
+      "GB_MYSQL_PASSWORD": "pass",
+      "GB_MYSQL_DATABASE": "gb_test"
+   },
+   "blammo": {
+      "GB_MYSQL_HOST": "0.0.0.0",
+      "GB_MYSQL_USERNAME": "blammo",
+      "GB_MYSQL_PASSWORD": "pass",
+      "GB_MYSQL_DATABASE": "gb_test"
+   }
+}
