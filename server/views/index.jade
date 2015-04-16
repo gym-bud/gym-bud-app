@@ -1,7 +1,11 @@
 html
    body
       h1 gym bud hello
-      form
-         input (type="email", placeholder="email here yo")
-         input (type="password", placeholder="password here yo")
-         input (type="button", value="enter it yo")
+      - if( !everyauth.loggedIn )
+         h2 not authenticated
+         a(href="/login") Login 
+         a(href="/register") Register
+
+      - else
+         h2 authenticated
+         #{user.id} #{user.login} #{user.role}
