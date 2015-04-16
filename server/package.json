@@ -23,7 +23,9 @@
     "express": "^4.12.3",
     "gulp": "^3.8.11",
     "jade": "^1.9.2",
-    "jsdoc": "^3.3.0-beta3"
+    "jsdoc": "^3.3.0-beta3",
+    "knex": "^0.7.6",
+    "treeize": "^2.0.1"
   },
   "devDependencies": {
     "bcrypt-nodejs": "0.0.3",

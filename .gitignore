@@ -1,6 +1,6 @@
 **/*.swp
 **/*.swo
-
 **/node_modules/
 mysql/gb_test.sql.old
 server/node_modules
+server/config.json
