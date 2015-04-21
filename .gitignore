@@ -1,6 +1,7 @@
 **/*.swp
 **/*.swo
 **/node_modules/
+**/npm-debug.log
 mysql/gb_test.sql.old
 server/node_modules
 server/config.json
