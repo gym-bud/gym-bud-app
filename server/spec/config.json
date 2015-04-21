@@ -1,0 +1,22 @@
+{
+   "defaultEnvironment": "blippity",
+   "development": {
+      "GB_MYSQL_HOST": "1.3.3.7",
+      "GB_MYSQL_USERNAME": "me",
+      "GB_MYSQL_PASSWORD": "hunter2",
+      "GB_MYSQL_DATABASE": "real_database"
+   },
+   "blippity": {
+      "GB_MYSQL_HOST": "8.3.3.8",
+      "GB_MYSQL_PASSWORD": "boop"
+   },
+   "blippo": {
+      "GB_MYSQL_HOST": "1.3.3.7",
+      "GB_MYSQL_USERNAME": "blippo",
+      "GB_MYSQL_PASSWORD": "hunter2",
+      "GB_MYSQL_DATABASE": "real_database"
+   },
+   "wrong": {
+      "GB_MYSQL_USERNAME": "notenuffields"
+   }
+}
