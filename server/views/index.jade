@@ -1,11 +1,7 @@
 html
    body
       h1 gym bud hello
-      - if( !everyauth.loggedIn )
-         h2 not authenticated
-         a(href="/login") Login 
-         a(href="/register") Register
+      a(href="/login") Login 
+      a(href="/register") Register
 
-      - else
-         h2 authenticated
-         #{user.id} #{user.login} #{user.role}
+      //#{user.id} #{user.login} #{user.role}
