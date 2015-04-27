@@ -1,7 +1,7 @@
 var _ = require('lodash');
 var env = require('../modules/env.js');
 
-describe("environmental variables", function() {
+xdescribe("environmental variables", function() {
 
    var error = undefined;
 
@@ -71,7 +71,7 @@ env.set();
 var db = require('../modules/db.js');
 
 
-describe("user queries", function() {
+xdescribe("user queries", function() {
    it("should be able to get a user", function(done) {
       db.getUser({username:'momo'}).then(function success(data) {
          expect(true).toBe(true);

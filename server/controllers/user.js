@@ -1,10 +1,39 @@
+var Q = require('q');
 var bcrypt = require('bcrypt-nodejs');
 
 var users = [];
 var nextId = 0;
 
-function addUser( username, password, role, fn ) {
+/**
+ *
+ */
+function addUser( username, password ) {
 
+   var d = Q.defer();
+
+   getUserByUsername( username )
+      .then( function( user ) {
+
+         d.reject( new Error('User with username [' + user.username + '] already exists') );
+         
+      }, function( err ) {
+
+         var hashed = bcrypt.hashSync( password );
+
+         var user = {
+            username: username,
+            password: hashed,
+            id: nextId++
+         };
+
+         users.push( user );
+
+         d.resolve( user );
+      });
+
+   return d.promise;
+
+/*
    findByUsername( username, function( err, user ) {
 
       if( user ) {
@@ -29,30 +58,63 @@ function addUser( username, password, role, fn ) {
       }
 
    });
+*/
 
 };
 
-function findById( id, fn ) {
+/**
+ *
+ */
+function removeAllUsers() {
+   var d = Q.defer();
+
+   var users = [];
+   var nextId = 0;
+
+   d.resolve();
+
+   return d.promise;
+};
+
+/**
+ *
+ */
+function getUserById( id ) {
+
+   var d = Q.defer();
 
    if( !users[id] ) { 
-      fn( new Error('User ' + id + ' does not exist'), null );
+      d.reject( new Error('User with id [' + id + '] does not exist') );
    }
 
-   fn( null, users[idx] );
+   d.resolve( users[id] );
+
+   return d.promise;
 };
 
-function findByUsername( username, fn ) {
+/**
+ *
+ */
+function getUserByUsername( username ) {
 
-   for (var i = 0, len = users.length; i < len; i++) {
-      var user = users[i];
-      if (user.username === username) {
-         return fn(null, user);
+   var d = Q.defer();
+
+   for (var i = 0, len = users.length; i < len; i++ ) {
+
+      if ( users[i].username === username ) {
+         d.resolve( users[i] );
       }
    }
 
-   return fn(null, null);
+   d.reject( new Error('User with username [' + username + '] does not exist') );
+
+   return d.promise;
 };
 
-exports.addUser = addUser;
-exports.findByUsername = findByUsername;
-exports.findById = findById;
+module.exports = {
+   removeAllUsers: removeAllUsers,
+   getUserByUsername: getUserByUsername,
+   getUserById: getUserById,
+   addUser: addUser
+};
+
