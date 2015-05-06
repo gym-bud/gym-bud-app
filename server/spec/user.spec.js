@@ -1,5 +1,13 @@
 var user = require('../controllers/user');
 
+var testUsername = 'eric@example.com';
+var testUsername2 = 'eric@billion.com';
+var testUsername3 = 'eric@trillion.com';
+var testUsernameInvalid = 'aninvalidemaiL@f';
+
+var testPassword = 'secret';
+var testPasswordShort = 'secre';
+
 describe('user module', function() {
 
    beforeEach(function( done ) {
@@ -12,9 +20,6 @@ describe('user module', function() {
 
    it('can add a user with a username and password', function( done ) {
 
-      var testUsername = 'eric@example.com';
-      var testPassword = 'secret';
-
       user.addUser( testUsername, testPassword )
          .then(function( user ) { 
             
@@ -22,40 +27,73 @@ describe('user module', function() {
 
          }, function( err ) {
 
-            expect( err ).toBe(null);
+            expect( err ).not.toBeDefined();
 
          })
          .done( done );
+   });
+
+   it('can remove all users', function( done ) {
+
+      user.addUser( testUsername, testPassword )
+         .then( user.addUser.bind( null, testUsername2, testPassword ) )
+         .then( user.addUser.bind( null, testUsername3, testPassword ) )
+         .then( user.removeAllUsers )
+         .then( function( usersLength ) {
+            
+            expect( usersLength ).toBe( 0 );
+
+         })
+         .catch( function( err ) {
+
+            expect( err ).not.toBeDefined();
+
+         })
+         .done( done );
+
    });
 
    it('will fail if that username already exists', function( done ) {
 
-      var testUsername = 'eric@example.com';
-      var testPassword = 'secret';
-
       user.addUser( testUsername, testPassword )
-         .then( user.addUser.bind(null, testUsername, testPassword) )
-         .then( null, function( err ) {
+         .then( function( newUser ) {
+
+            return user.addUser( testUsername, testPassword );
+
+         })
+         .catch( function( err ) {
             
-            expect( err ).not.toBe( null );
+            expect( err ).toBeDefined();
+
          })
          .done( done );
 
    });
 
-   it('will fail if the username is not a valid email', function() {
+   // TODO: add more invalid emails
+   it('will fail if the username is not a valid email', function( done ) {
 
-      user.addUser( 'notavalidemail', 'secret', function( err, userId ) { 
-         expect(err).not.toBe(null);
-      });
+
+      user.addUser( testUsernameInvalid, testPassword )
+         .then( null, function( err ) {
+            expect(err).not.toBe(null);
+         })
+         .done( done );
    });
 
-   it('will fail if the password is not at least 6 characters', function() {
+   it('will fail if the password is not at least 6 characters', function( done ) {
 
-      user.addUser( 'eric@example.com', 'secre', function( err, userId ) {
-         expect(err).not.toBe(null);
-      });
+      user.addUser( testUsername, testPasswordShort )
+         .then( null, function( err ) {
+            expect(err).not.toBe(null);
+         })
+         .done( done );
    });
-   
+
+   //TODO
+   xit('can get a user by its id', function( done ) {
+
+   });
+
 
 });
