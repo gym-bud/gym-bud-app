@@ -1,7 +1,23 @@
 var gulp = require('gulp');
-var jasmine = require('gulp-jasmine');
+var jshint = require('gulp-jshint');
+var nodemon = require('gulp-nodemon');
 
-gulp.task('default', function() {
-   return gulp.src('spec/test.js')
-      .pipe(jasmine());
+gulp.task( 'lint', function() {
+
+   gulp.src(['./controllers/*.js', 'index.js'])
+      .pipe(jshint())
+      .pipe(jshint.reporter('default'))
+
+});
+
+gulp.task( 'start', ['lint'], function() {
+
+   nodemon({
+      script: 'index.js',
+      ext: 'js jade',
+      ignore: ['**/*.spec.js'],
+      tasks: ['lint'],
+      env: { 'NODE_ENV': 'development' }
+   })
+
 });

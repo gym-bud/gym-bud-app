@@ -1,90 +1,92 @@
+var passport = require('passport');
+var localStrategy = require('passport-local').Strategy;
+
 var bcrypt = require('bcrypt-nodejs');
 
-var usersById = {};
-var nextUserId = 0;
+var userController = require('../controllers/user');
 
-/*
-function addUser( user ) {
+/**
+ * @override passport's internal serialize user
+ */
+passport.serializeUser( function( user, done ) {
 
-   console.log('added user: [' + user.login + ': ' + user.password + ']');
+   done(null, user.id);
 
-   user.id = ++nextUserId;
-   return usersById[nextUserId] = user;
+});
+
+/**
+ * @override passport's internal deserialize user
+ */
+passport.deserializeUser( function( id, done ) {
+
+   userController.getUserById( id )
+   .then( function( user ) { return user; } )
+   .nodeify( done );
+
+});
+
+/**
+ * custom middleware will redirect if not a user 
+ *
+ */
+function ensureUser( req, res, next ) {
+
+   if( req.isAuthenticated() ) {
+      return next();
+   } else {
+
+      res.render( 'login', { 
+         error: 'You must be logged in.' 
+      });
+
+   }
+}
+
+/**
+ * custom middleware will redirect if not an admin 
+ *
+ */
+function ensureAdmin( req, res, next ) {
+
+   if( req.isAuthenticated() ) {
+      return next();
+   } else {
+
+      res.render( 'login', { 
+         email: req.user.email, 
+         error: 'You must be logged in as an admin.' 
+      });
+   }
+
+}
+
+/**
+ * local authentication strategy
+ * 
+ */
+function userAuthentication( email, password, done ) {
+
+   console.log('LOGIN ATTEMPT: ' + email + ' [ ' + password + ' ]' );
+
+   return userController.getUserByEmail( email )
+   .then( function( user ) {
+
+      if( !bcrypt.compareSync(password, user.password) ) {
+         throw new Error('Password does not match.');
+      }
+
+      return user;
+
+   })
+   .nodeify( done );
+
+}
+
+module.exports = {
+   userAuthentication: new localStrategy({ 
+      usernameField: 'email', 
+      passwordField: 'password' 
+   }, userAuthentication),
+   ensureUser: ensureUser,
+   ensureAdmin: ensureAdmin
 };
-
-var usersByLogin = {
-   'eric@example.com': addUser({ 
-      login: 'eric@example.com', 
-      password: bcrypt.hashSync('apassword'), 
-      role: 'admin' 
-   })
-};
-*/
-
-/*
-everyauth.everymodule
-   .findUserById( function( id, callback ) {
-      callback( null, usersById[id] );
-   });
-
-everyauth.password
-   .loginWith('email')
-   .getLoginPath('/login')
-   .postLoginPath('/login')
-   .loginView('login.jade')
-   .authenticate( function( login, password ) {
-      
-      console.log('authenitcating');
-
-      var errors = [];
-
-      if( !login ) { 
-         console.log( 'Missing login' ); 
-         errors.push('missing login');
-      }
-      if( !password ) { 
-         console.log( 'Missing password' ); 
-         errors.push('missing login');
-      }
-
-      if ( errors.length > 0 ) { return errors; }
-
-      var user = usersByLogin[ login ];
-      
-      if( !user ) { 
-         console.log('User does not exist'); 
-         return ['user does not exist'];
-      }
-
-      if( bcrypt.compareSync(password, user.password) ) { 
-
-         return user;
-      } else {
-         errors.push('password does not match');
-      }
-
-
-      return errors;
-
-
-   })
-   .getRegisterPath('/register')
-   .postRegisterPath('/register')
-   .registerView('register.jade')
-   .validateRegistration( function( newUserAttrs, errors) {
-
-      var login = newUserAttrs.login;
-
-      if( usersByLogin[login] ) errors.push( 'Login already taken' );
-
-      return errors;
-   })
-   .registerUser( function( newUserAttrs ) {
-      var login = newUserAttrs[this.loginKey()];
-
-      return usersByLogin[login] = addUser(newUserAttrs);
-   })
-   .loginSuccessRedirect('/')
-   .registerSuccessRedirect('/');
-
-*/

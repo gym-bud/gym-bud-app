@@ -5,7 +5,7 @@ var testGroupName = 'testGroupName';
 var testUsername = 'eric@example.com';
 var testPassword = 'password';
 
-describe('gym module', function() {
+xdescribe('gym module', function() {
 
    beforeEach(function( done ) {
 

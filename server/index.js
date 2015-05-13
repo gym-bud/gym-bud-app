@@ -1,7 +1,7 @@
 //sets environmental variables... should happen before anything else
-require('./modules/env.js').set();
+require('./controllers/env.js').set();
 
-var db = require("./modules/db.js");
+var db = require("./controllers/db.js");
 
 var express = require('express');
 var cookieParser = require('cookie-parser');
@@ -9,11 +9,14 @@ var bodyParser = require('body-parser');
 var session = require('express-session');
 var url = require('url');
 
+/* passport */
+var passport = require('passport');
+var userAuthentication = require('./controllers/authentication').userAuthentication;
+var ensureAuthenticated = require('./controllers/authentication').ensureAuthenticated;
+passport.use( userAuthentication );
+
 /* controllers */
 var site = require('./controllers/site');
-var user = require('./controllers/user');
-
-var authentication = require('./controllers/authentication');
 
 var app = express();
 var sessionOptions = {
@@ -22,7 +25,7 @@ var sessionOptions = {
    saveUninitialized: true,
    // if we are running in production, only serve secure cookies
    // $export NODE_ENV=production, defaults to development
-   cookie: { secure: !!( app.get('env') === 'production' ) }
+   cookie: { secure: ( app.get('env') === 'production' ) }
 };
 
 /* general configuration */
@@ -32,18 +35,32 @@ app.set('view engine', 'jade')
 
 /* serves static files with the /static prefix: /static/css.main.css */
 app.use('/static', express.static(__dirname + '/build/static'))
-   .use(bodyParser())
+   // uses node querystring instead of qs
+   .use(bodyParser.urlencoded({ extended: false })) 
    .use(session(sessionOptions))
+   .use(passport.initialize())
+   .use(passport.session());
 
 
-/* routes */
-app.get('/', site.index);
+/* login routes */
+app.get( '/login', site.login );
+app.post( '/login', passport.authenticate('local'), site.loginSuccess, site.loginFailure );
+app.get( '/logout', site.logoutUser );
+app.get( '/register', site.register );
+app.post( '/register', site.registerUser, passport.authenticate('local'), site.loginSuccess, site.registerFailure );
 
-//app.get('/login', authentication.getLogin);
-//app.post('/login', authentication.login);
+/* money route */
+app.get( '/', site.index );
 
+//app.get( '/adminOnly', ensureUser, ensureAdmin, site.admin );
 
-// session test
+//app.use( '/userOnly', ensureUser, site.user );
+
+//app.get( '/systemAdmin/add/:id', ensureAuthenticated, site.addSytemAdmin );
+//app.get( '/systemAdmin/delete/:id', ensureAuthenticated, site.addSytemAdmin );
+
+/*
+// session tests
 
 app.use(function( req, res, next ) {
    var views = req.session.views;
@@ -56,15 +73,16 @@ app.use(function( req, res, next ) {
 
    var pathname = url.parse(req.url).pathname;
 
-   views[pathname] = ( views[pathname] || 0 ) + 1 
+   views[pathname] = ( views[pathname] || 0 ) + 1;
 
    next();
-
 });
 
 app.get('/count', function( req, res, next) {
    res.send('you viewed this page ' + req.session.views['/count'] + ' times');
 });
+
+*/
 
 
 /* if no path already responded, assume 404 */
@@ -72,12 +90,8 @@ app.use(function(req, res, next) {
    res.status(404).render('404', { url: req.originalUrl });
 });
 
-var server = app.listen(3000, function() {
-
-   var host = server.address().address;
-   var port = server.address().port;
-
-   console.log( 'Listening on http://%s:%s', host, port );
+app.listen(3000, function() {
+   console.log('listening on port 3000');
 });
 
 module.exports = app;

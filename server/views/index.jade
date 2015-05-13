@@ -1,7 +1,12 @@
 html
    body
-      h1 gym bud hello
-      a(href="/login") Login 
-      a(href="/register") Register
+      h1 gym bud home 
+      if user
+         p Logged in as: #{user.first_name} #{user.last_name}
+         a(href="/logout") logout
+      else
+         a(href="/login") login
+         br
+         a(href="/register") register
 
-      //#{user.id} #{user.login} #{user.role}
+

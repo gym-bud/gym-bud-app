@@ -1,5 +1,5 @@
 var _ = require('lodash');
-var env = require('../modules/env.js');
+var env = require('../env/env.js');
 
 xdescribe("environmental variables", function() {
 
@@ -68,7 +68,7 @@ xdescribe("environmental variables", function() {
 delete(process.env.GB_ENVIRONMENT);
 env.set();
 
-var db = require('../modules/db.js');
+var db = require('../env/db.js');
 
 
 xdescribe("user queries", function() {

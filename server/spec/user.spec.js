@@ -1,29 +1,19 @@
+require('../env/env').set();
 var user = require('../controllers/user');
-
-var testUsername = 'eric@example.com';
-var testUsername2 = 'eric@billion.com';
-var testUsername3 = 'eric@trillion.com';
-var testUsernameInvalid = 'aninvalidemaiL@f';
-
-var testPassword = 'secret';
-var testPasswordShort = 'secre';
 
 describe('user module', function() {
 
    beforeEach(function( done ) {
       user.removeAllUsers()
-         .then(function() {
-            done();
-         });
-
+         .then( done );
    });
 
    it('can add a user with a username and password', function( done ) {
 
-      user.addUser( testUsername, testPassword )
-         .then(function( user ) { 
-            
-            expect( user.username ).toBe( testUsername );
+      user.addUser( 'eric@gymbud.rocks', 'apassword', 'afirstname', 'atrickylastname' )
+         .then(function( userid ) { 
+
+            expect( userid ).toBeGreaterThan( 0 );
 
          }, function( err ) {
 
@@ -35,13 +25,14 @@ describe('user module', function() {
 
    it('can remove all users', function( done ) {
 
-      user.addUser( testUsername, testPassword )
-         .then( user.addUser.bind( null, testUsername2, testPassword ) )
-         .then( user.addUser.bind( null, testUsername3, testPassword ) )
+      user.addUser( 'testuser@unuseddomain.org', 'secretly', 'fn', 'ln' )
+         .then( user.addUser.bind( null, 'testuser@testdomain.org', 'secretly', 'fn', 'ln' ) )
+         .then( user.addUser.bind( null, 'testuser@validdomain.org', 'bigsecret', 'fn', 'ln' ) )
          .then( user.removeAllUsers )
-         .then( function( usersLength ) {
+         .then( function( rowsDeleted ) {
             
-            expect( usersLength ).toBe( 0 );
+            //added 3 users, 3 should be deleted
+            expect( rowsDeleted ).toBe( 3 );
 
          })
          .catch( function( err ) {
@@ -55,13 +46,13 @@ describe('user module', function() {
 
    it('will fail if that username already exists', function( done ) {
 
-      user.addUser( testUsername, testPassword )
-         .then( function( newUser ) {
+      user.addUser( 'eric@gymbud.rocks', 'secret', 'fn', 'ln' )
+         .then( user.addUser.bind( null, 'eric@gymbud.rocks', 'secret', 'fn', 'ln' ) )
+         .then( function( userid ) {
 
-            return user.addUser( testUsername, testPassword );
+            expect( userid ).not.toBeDefined();
 
-         })
-         .catch( function( err ) {
+         }, function( err ) {
             
             expect( err ).toBeDefined();
 
@@ -73,27 +64,76 @@ describe('user module', function() {
    // TODO: add more invalid emails
    it('will fail if the username is not a valid email', function( done ) {
 
+      user.addUser( 'aninvalidemail@dfa', 'secret' )
+         .then( function( userid ) {
+         
+            expect( userid ).not.toBeGreaterThan( 0 );
 
-      user.addUser( testUsernameInvalid, testPassword )
-         .then( null, function( err ) {
-            expect(err).not.toBe(null);
+         }, function( err ) {
+
+            expect( err ).not.toBe( undefined );
+
          })
          .done( done );
    });
 
    it('will fail if the password is not at least 6 characters', function( done ) {
 
-      user.addUser( testUsername, testPasswordShort )
+      user.addUser( 'valid@anotherdomain.org' , 'short' )
          .then( null, function( err ) {
             expect(err).not.toBe(null);
          })
          .done( done );
    });
 
-   //TODO
-   xit('can get a user by its id', function( done ) {
+   it('can get a user by its id', function( done ) {
+
+      user.addUser( 'eric@gymbud.rocks', 'apassword', 'afirstname', 'atrickylastname' )
+         .then(function( userid ) { 
+         
+            return user.getUserById( userid );
+
+         })
+         .then(function( user ) {
+
+            expect( user.email ).toBe( 'eric@gymbud.rocks' );
+            expect( user.password ).not.toBe( undefined );
+            expect( user.first_name ).toBe( 'afirstname' );
+            expect( user.last_name ).toBe( 'atrickylastname' );
+
+         })
+         .catch(function( err ) {
+
+            expect( err ).not.toBeDefined();
+
+         })
+         .done( done );
 
    });
 
+   it('can get a user by its email', function( done ) {
+
+      user.addUser( 'eric111@gymbud.rocks', 'passylongpassy', 'ericfirst', 'ericlast' )
+         .then(function( userid ) { 
+
+            return user.getUserByEmail( 'eric111@gymbud.rocks' );
+
+         })
+         .then(function( user ) {
+
+            expect( user.email ).toBe( 'eric111@gymbud.rocks' );
+            expect( user.password ).not.toBe( undefined );
+            expect( user.first_name ).toBe( 'ericfirst' );
+            expect( user.last_name ).toBe( 'ericlast' );
+
+         })
+         .catch(function( err ) {
+
+            expect( err ).not.toBeDefined();
+
+         })
+         .done( done );
+
+   });
 
 });

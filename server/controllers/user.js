@@ -1,117 +1,154 @@
 var Q = require('q');
 var bcrypt = require('bcrypt-nodejs');
 var _ = require('lodash');
+var knex = require('./db').knex;
 
 var users = [];
 var nextId = 0;
 
-var emailRegex = /[A-Za-z0-9._%+-]+\@[A-Za-z]*\.[A-Za-z]*\.*[A-Za-z]*/;
 var minPasswordLength = 6;
 
 /**
  *
+ * returns true if email is valid
  */
-function addUser( username, password ) {
+function isValidEmail( email ) {
+
+   var emailRegex = /[A-Za-z0-9._%+-]+\@[A-Za-z]*\.[A-Za-z]*\.*[A-Za-z]*/;
+
+   console.log( email.search(emailRegex) );
+
+   return ( email.search(emailRegex) >= 0 );
+}
+
+/**
+*
+*/
+function createUser( email, password, firstName, lastName ) {
 
    var d = Q.defer();
 
-   // according to 
-   // http://stackoverflow.com/questions/201323/using-a-regular-expression-to-validate-an-email-address
-   // it is best to just try to catch simple email entry errors and not actually all valid email
-   // addresses
-   if( username.search(emailRegex) == -1 ) {
-      d.reject( new Error('The email address [' + username + '] is invalid') );
+   if( !isValidEmail(email) ) {
+      d.reject( new Error('The email address [' + email + '] is invalid.') );
    }
 
    if( password.length < minPasswordLength ) {
-      d.reject( new Error('Passwords must be longer than 6 characters') );
+      d.reject( new Error('Passwords must be longer than 6 characters.') );
    }
 
-   getUserByUsername( username )
-      .then( function( user ) {
+   knex
+   .insert({ 
+      'email': email, 
+      'password': bcrypt.hashSync( password ), 
+      'first_name': firstName, 
+      'last_name': lastName 
+   })
+   .into(' user ')
+   .then( function( rows ) {
 
-         d.reject( new Error('User with username [' + user.username + '] already exists') );
-         
-      }, function( err ) {
+      d.resolve( rows[0] );
 
-         var hashed = bcrypt.hashSync( password );
+   })
+   .catch( function( error ) {
 
-         var user = {
-            username: username,
-            password: hashed,
-            id: nextId++
-         };
+      d.reject( error );
 
-         console.log(user);
-         console.log(user.password.length);
-
-         users.push( user );
-
-         d.resolve( user );
-      });
+   });
 
    return d.promise;
 
-};
+}
 
 /**
  *
  */
+function removeUserSystemAdmin( userid ) {
+
+   return knex('system_admin')
+   .where('user_id', userid)
+   .delete()
+   .then( function() {
+      console.log('user: ' + userid + ' deleted from system admin');
+   })
+   .catch( function() {
+      console.log('user: ' + userid + 'failed to delete  from system admin');
+   });
+}
+
+/**
+ *
+ */
+function addUserSystemAdmin( userid ) {
+
+   return getUserById( userid )
+   .then( function( user ) {
+
+      return knex
+      .insert({
+         'user_id': user.id
+      })
+      .into('system_admin');
+
+   })
+   .then( function( id ) {
+
+      console.log( 'user: ' + id + ' inserted into system admin table');
+
+   })
+   .catch( function ( error ) {
+
+      console.log( 'user: ' + id + ' failed to insert into sytem admin table');
+   });
+}
+
+/**
+*
+*/
 function removeAllUsers() {
-   var d = Q.defer();
 
-   users = [];
-   nextId = 0;
-
-   d.resolve( users.length );
-
-   return d.promise;
-};
+   return knex( 'user' ).del();
+}
 
 /**
- *
- */
-function getUserById( id ) {
+*
+*/
+function getUserById( userid ) {
 
    var d = Q.defer();
 
-   for (var i = 0, len = users.length; i < len; i++ ) {
-
-      if ( users[i].id === id ) {
-         d.resolve( users[i] );
-         break;
-      }
-   }
-
-   d.reject( new Error('User with id [' + id + '] does not exist') );
+   knex
+   .select('*')
+   .from('user')
+   .where({ 'id': userid })
+   .then( function( rows ) {
+      d.resolve( rows[0] );
+   });
 
    return d.promise;
-};
+
+}
 
 /**
- *
- */
-function getUserByUsername( username ) {
+*
+*/
+function getUserByEmail( email ) {
 
    var d = Q.defer();
 
-   for (var i = 0, len = users.length; i < len; i++ ) {
-
-      if ( users[i].username === username ) {
-         d.resolve( users[i] );
-         break;
-      }
-   }
-
-   d.reject( new Error('User with username [' + username + '] does not exist') );
+   knex( 'user' ).where({ 'email': email })
+   .then( function( rows ) {
+      d.resolve( rows[0] );
+   }, function( err ) {
+      d.reject( err );
+   });
 
    return d.promise;
-};
+}
 
 module.exports = {
    removeAllUsers: removeAllUsers,
-   getUserByUsername: getUserByUsername,
+   getUserByEmail: getUserByEmail,
    getUserById: getUserById,
-   addUser: addUser
+   createUser: createUser 
 };
 

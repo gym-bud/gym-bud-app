@@ -1,9 +1,0 @@
-{
-   "defaultEnvironment": "development",
-   "development": {
-      "GB_MYSQL_CONNECTION_STRING": "Server=0.0.0.0;Database=gb_test;Uid=testroot;Pwd=pass;"
-   },
-   "production": {
-      "GB_MYSQL_CONNECTION_STRING": "Server=secretplace.com;Database=secretDB;Uid=secretuser;Pwd=secretpass;"
-   }
-}
