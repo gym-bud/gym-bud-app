@@ -15,6 +15,9 @@ var userAuthentication = require('./controllers/authentication').userAuthenticat
 var ensureAuthenticated = require('./controllers/authentication').ensureAuthenticated;
 passport.use( userAuthentication );
 
+/* bouncer */
+var bouncer = require('./controllers/bouncer')( 10000, 6000000, 2 );
+
 /* controllers */
 var site = require('./controllers/site');
 
@@ -44,7 +47,7 @@ app.use('/static', express.static(__dirname + '/build/static'))
 
 /* login routes */
 app.get( '/login', site.login );
-app.post( '/login', passport.authenticate('local'), site.loginSuccess, site.loginFailure );
+app.post( '/login', bouncer.block, passport.authenticate('local'), site.loginSuccess, site.loginFailure );
 app.get( '/logout', site.logoutUser );
 app.get( '/register', site.register );
 app.post( '/register', site.registerUser, passport.authenticate('local'), site.loginSuccess, site.registerFailure );
@@ -86,11 +89,11 @@ app.get('/count', function( req, res, next) {
 
 
 /* if no path already responded, assume 404 */
-app.use(function(req, res, next) {
+app.use( function(req, res, next) {
    res.status(404).render('404', { url: req.originalUrl });
 });
 
-app.listen(3000, function() {
+app.listen( 3000, function() {
    console.log('listening on port 3000');
 });
 

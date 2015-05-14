@@ -28,8 +28,17 @@ function createUser( email, password, firstName, lastName ) {
 
    var d = Q.defer();
 
+   if( typeof req.body.email !== 'string' || 
+       typeof req.body.password !== 'string' || 
+       typeof req.body.firstName !== 'string' || 
+       typeof req.body.firstName !== 'string' ) {
+
+       d.reject( new Error('A parameter is invalid.') ); 
+   }
+
+
    if( !isValidEmail(email) ) {
-      d.reject( new Error('The email address [' + email + '] is invalid.') );
+      d.reject( new Error('The email address [ ' + email + ' ] is invalid.') );
    }
 
    if( password.length < minPasswordLength ) {
@@ -137,9 +146,18 @@ function getUserByEmail( email ) {
 
    knex( 'user' ).where({ 'email': email })
    .then( function( rows ) {
+
+      if( rows.length === 0 ) {
+         d.reject('User does not exist');
+
+      }
+
       d.resolve( rows[0] );
+
    }, function( err ) {
+
       d.reject( err );
+
    });
 
    return d.promise;

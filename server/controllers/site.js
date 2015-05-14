@@ -32,7 +32,7 @@ function loginFailure( err, req, res, next ) {
    
    res.render( 'login', { 
       email: req.body.email, 
-      error: 'Email or password is incorrect.' 
+      error: err 
    });
 
 }
