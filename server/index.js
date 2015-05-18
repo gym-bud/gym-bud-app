@@ -45,6 +45,9 @@ app.use('/static', express.static(__dirname + '/build/static'))
    .use(passport.session());
 
 
+
+
+
 /* login routes */
 app.get( '/login', site.login );
 app.post( '/login', bouncer.block, passport.authenticate('local'), site.loginSuccess, site.loginFailure );
@@ -54,6 +57,7 @@ app.post( '/register', site.registerUser, passport.authenticate('local'), site.l
 
 /* money route */
 app.get( '/', site.index );
+app.get( '/error', site.error );
 
 //app.get( '/adminOnly', ensureUser, ensureAdmin, site.admin );
 
@@ -87,6 +91,12 @@ app.get('/count', function( req, res, next) {
 
 */
 
+// if an error was thrown with next, catch it here
+app.use( function( err, req, res, next ) {
+
+   console.log('logging an error: ' + err);
+   res.status(500).send({ error : err });
+});
 
 /* if no path already responded, assume 404 */
 app.use( function(req, res, next) {

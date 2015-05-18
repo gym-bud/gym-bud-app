@@ -25,40 +25,6 @@ passport.deserializeUser( function( id, done ) {
 
 });
 
-/**
- * custom middleware will redirect if not a user 
- *
- */
-function ensureUser( req, res, next ) {
-
-   if( req.isAuthenticated() ) {
-      return next();
-   } else {
-
-      res.render( 'login', { 
-         error: 'You must be logged in.' 
-      });
-
-   }
-}
-
-/**
- * custom middleware will redirect if not an admin 
- *
- */
-function ensureAdmin( req, res, next ) {
-
-   if( req.isAuthenticated() ) {
-      return next();
-   } else {
-
-      res.render( 'login', { 
-         email: req.user.email, 
-         error: 'You must be logged in as an admin.' 
-      });
-   }
-
-}
 
 /**
  * local authentication strategy
@@ -86,7 +52,5 @@ module.exports = {
    userAuthentication: new localStrategy({ 
       usernameField: 'email', 
       passwordField: 'password' 
-   }, userAuthentication),
-   ensureUser: ensureUser,
-   ensureAdmin: ensureAdmin
+   }, userAuthentication)
 };

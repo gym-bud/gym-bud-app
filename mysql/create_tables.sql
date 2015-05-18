@@ -12,45 +12,69 @@ ENGINE = InnoDB;
 CREATE TABLE `system_admin` (
    `user_id` INT UNSIGNED NOT NULL,
    FOREIGN KEY (user_id) REFERENCES user(id) ON DELETE CASCADE,
-   `create_date` DATETIME NOT NULL,
-   `modify_date` DATETIME NOT NULL
+   `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
+   `updated_at` DATETIME ON UPDATE CURRENT_TIMESTAMP 
 )
 ENGINE = InnoDB;
 
-CREATE TABLE `gym_group` (
+CREATE TABLE `organization` (
    `id` INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
    `name` VARCHAR(100) NOT NULL UNIQUE,
-   `create_date` DATE NOT NULL,
-   `modify_date` DATE NOT NULL
+   `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
+   `updated_at` DATETIME ON UPDATE CURRENT_TIMESTAMP 
 ) 
 ENGINE = InnoDB;
 
-CREATE TABLE `gym_group_admin` (
-   `gym_group_id` INT UNSIGNED NOT NULL,
+CREATE TABLE `organization_role` (
+   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+   `name` VARCHAR(30) NOT NULL UNIQUE,
+   `description` VARCHAR(100),
+   `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
+   `updated_at` DATETIME ON UPDATE CURRENT_TIMESTAMP 
+)
+ENGINE = InnoDB;
+
+CREATE TABLE `user_organization_role` (
+   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
    `user_id` INT UNSIGNED NOT NULL, 
-   `create_date` DATE NOT NULL,
-   `modify_date` DATE NOT NULL,
-   FOREIGN KEY (gym_group_id) REFERENCES gym_group(id) ON DELETE CASCADE,
-   FOREIGN KEY (user_id) REFERENCES user(id) ON DELETE CASCADE
+   `organization_id` INT UNSIGNED NOT NULL,
+   `organization_role_id` INT UNSIGNED NOT NULL,
+   `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
+   `updated_at` DATETIME ON UPDATE CURRENT_TIMESTAMP,
+   FOREIGN KEY (user_id) REFERENCES user(id) ON DELETE CASCADE,
+   FOREIGN KEY (organization_id) REFERENCES organization(id) ON DELETE CASCADE,
+   FOREIGN KEY (organization_role_id) REFERENCES organization_role(id) ON DELETE CASCADE
 ) 
 ENGINE = InnoDB;
 
 CREATE TABLE `gym` (
    `id` INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
-   `gym_group_id` INT UNSIGNED NOT NULL,
+   `organization_id` INT UNSIGNED NOT NULL,
    `name` VARCHAR(100) NOT NULL UNIQUE,
-   `create_date` DATE NOT NULL,
-   `modify_date` DATE NOT NULL,
-   FOREIGN KEY (gym_group_id) REFERENCES gym_group(id) ON DELETE CASCADE
+   `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
+   `updated_at` DATETIME ON UPDATE CURRENT_TIMESTAMP,
+   FOREIGN KEY (organization_id) REFERENCES organization(id) ON DELETE CASCADE
 ) 
 ENGINE = InnoDB;
 
-CREATE TABLE `gym_employee` (
+CREATE TABLE `gym_role` (
+   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+   `name` VARCHAR(30) NOT NULL UNIQUE,
+   `description` VARCHAR(100),
+   `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
+   `updated_at` DATETIME ON UPDATE CURRENT_TIMESTAMP 
+) 
+ENGINE = InnoDB;
+
+CREATE TABLE `user_gym_role` (
+   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+   `user_id` INT UNSIGNED NOT NULL, 
    `gym_id` INT UNSIGNED NOT NULL,
-   `user_id` INT UNSIGNED NOT NULL,
-   `create_date` DATE NOT NULL,
-   `modify_date` DATE NOT NULL,
+   `gym_role_id` INT UNSIGNED NOT NULL,
+   `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
+   `updated_at` DATETIME ON UPDATE CURRENT_TIMESTAMP,
+   FOREIGN KEY (user_id) REFERENCES user(id) ON DELETE CASCADE,
    FOREIGN KEY (gym_id) REFERENCES gym(id) ON DELETE CASCADE,
-   FOREIGN KEY (user_id) REFERENCES user(id) ON DELETE CASCADE
+   FOREIGN KEY (gym_role_id) REFERENCES gym_role(id) ON DELETE CASCADE
 ) 
 ENGINE = InnoDB;

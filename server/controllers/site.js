@@ -37,10 +37,21 @@ function loginFailure( err, req, res, next ) {
 
 }
 
-function index( req, res ) {
+/**
+ *
+ */
+function index( req, res, next ) {
 
    res.render('index', { user: req.user });
+}
 
+/**
+ *
+ */
+function error( req, res, next ) {
+
+
+   res.redirect('index');
 }
 
 /**
@@ -68,7 +79,14 @@ function registerFailure( err, req, res, next ) {
 
 function registerUser( req, res, next ) {
 
-   userController.createUser( req.body.email, req.body.password, req.body.firstName, req.body.lastName )
+   userController
+   .createUser( 
+      req.body.email, 
+      req.body.password, 
+      req.body.firstName, 
+      req.body.lastName 
+   )
+   .then( userController.makeAdminIfEmail('ebuckthal@gmail.com') )
    .nodeify( next );
 }
 
@@ -87,6 +105,7 @@ module.exports = {
    registerFailure: registerFailure,
    loginSuccess: loginSuccess,
    loginFailure: loginFailure,
-   index: index
+   index: index,
+   error: error 
 };
 
