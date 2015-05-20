@@ -10,7 +10,7 @@ var userController = require('../controllers/user');
  */
 passport.serializeUser( function( user, done ) {
 
-   done(null, user.id);
+   done(null, user._id);
 
 });
 
@@ -37,7 +37,9 @@ function userAuthentication( email, password, done ) {
    return userController.getUserByEmail( email )
    .then( function( user ) {
 
-      if( !bcrypt.compareSync(password, user.password) ) {
+      console.log( user );
+
+      if( !bcrypt.compareSync(password, user._password) ) {
          throw new Error('Password does not match.');
       }
 

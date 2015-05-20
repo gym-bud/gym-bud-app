@@ -7,12 +7,48 @@ var minPasswordLength = 6;
 var emailRegex = /[A-Za-z0-9._%+-]+\@[A-Za-z]*\.[A-Za-z]*\.*[A-Za-z]*/;
 
 /**
+ * @constructor
+ */
+function User( id, email, password, firstname, lastname ) {
+
+   this._id = id;
+   this._email = email;
+   this._password = password;
+   this._firstname = firstname;
+   this._lastname = lastname;
+}
+
+/**
  *
- * isValidEmail :: String -> Promise String
+ * isSystemAdmin :: User -> Boolean Promise
+ */
+User.prototype.isSystemAdmin = function() {
+
+   console.log('isSystemAdmin? ' + this._id);
+
+   return knex
+   .from('user')
+   .innerJoin('system_admin', 'user.id', 'system_admin.user_id')
+   .where({ 'user.id' : this._id })
+   .then( function( results ) {
+      
+      if( results.length > 0 ) {
+
+         return true;
+
+      } else {
+
+         throw new Error('No admin rights');
+      }
+   });
+
+}
+
+/**
+ *
+ * validateEmail :: String -> Promise String
  */
 function validateEmail( email ) {
-
-   console.log( 'validateEmail: ' + email );
 
    var d = Q.defer();
 
@@ -31,6 +67,7 @@ function validateEmail( email ) {
 
 /**
  *
+ * validatePassword :: String -> Promise String
  */
 function validatePassword( password ) {
 
@@ -53,17 +90,15 @@ function validatePassword( password ) {
 
 /**
  *
+ * validateFirstName :: String -> Promise String
  */
 function validateFirstName( firstname ) {
    
-   console.log( 'validateFirstname: ' + firstname );
-
    var d = Q.defer();
 
    if( firstname.length > 0 ) {
 
       d.resolve( firstname );
-
 
    } else {
 
@@ -76,11 +111,10 @@ function validateFirstName( firstname ) {
 
 /**
  *
+ * validateLastName :: String -> Promise String
  */
 function validateLastName( lastname ) {
 
-   console.log( 'validateLastname: ' + lastname );
-   
    var d = Q.defer();
 
    if( lastname.length > 0 ) {
@@ -108,8 +142,6 @@ function createUser( email, password, firstName, lastName ) {
       validateLastName( lastName )
    ])
    .then( function( results ) {
-
-      console.log( results );
 
       var user = { 
          'email': results[0], 
@@ -153,35 +185,20 @@ function makeAdminIfEmail( email ) {
 
    return function( user ) {
 
-      console.log('make admin if email: ' + email + ' and ' + user.email);
+      console.log('make admin if email: ' + email + ' and ' + user._email);
 
-      if( user.email === email ) {
+      if( user._email === email ) {
 
          return knex
-         .insert({ 'user_id': user.id })
+         .insert({ 'user_id': user._id })
          .into('system_admin')
          .then( function( ids ) {
-
             return user;
          });
       }
 
       return user;
    }
-}
-
-/**
- *
- */
-function addUserSystemAdmin( userid ) {
-
-   return getUserById( userid )
-   .then( function( user ) {
-
-   })
-   .then( function( id ) {
-      console.log( 'user: ' + id + ' inserted into system admin table');
-   });
 }
 
 /**
@@ -193,29 +210,45 @@ function removeAllUsers() {
 }
 
 /**
+ *
+ * extractUser :: DB User rows -> User
+ */
+function extractUser( dbResult ) {
+
+   if( dbResult.length === 0 ) {
+      throw new Error('User with id: ' + userid + ' does not exist');
+   }
+
+   return new User(
+      dbResult[0].id, 
+      dbResult[0].email, 
+      dbResult[0].password, 
+      dbResult[0].first_name, 
+      dbResult[0].last_name
+   );
+}
+
+/**
 *
+* getUserById :: Number -> User Promise
 */
 function getUserById( userid ) {
-
-   var d = Q.defer();
 
    return knex
    .select('*')
    .from('user')
    .where({ 'id': userid })
-   .then( function( rows ) {
+   .then( extractUser )
+   .catch( function( err ) {
 
-      if( rows.length === 0 ) {
-         throw new Error('User with id: ' + userid + ' does not exist');
-      }
-
-      return rows[0];
+      throw new Error('User with id: ' + userid + ' does not exist');
    });
 
 }
 
 /**
 *
+* getUserByEmail :: String -> User Promise
 */
 function getUserByEmail( email ) {
 
@@ -223,44 +256,11 @@ function getUserByEmail( email ) {
    .select('*')
    .from('user')
    .where({ 'email': email })
-   .then( function( rows ) {
+   .then( extractUser )
+   .catch( function( err ) {
 
-      if( rows.length === 0 ) {
-         throw new Error('User with email: ' + email + ' does not exist');
-      }
-
-      return rows[0];
+      throw new Error('User with email: ' + email + ' does not exist');
    });
-}
-
-/**
- *
- */
-function isAdmin( userid ) {
-
-   var d = Q.defer();
-
-   knex
-   .select('*')
-   .from('user')
-   .where({ 'email': email })
-   .then( function( rows ) {
-
-      if( rows.length === 0 ) {
-         d.reject('User does not exist');
-
-      }
-
-      d.resolve( rows[0] );
-
-   }, function( err ) {
-
-      d.reject( err );
-
-   });
-
-   return d.promise;
-
 }
 
 module.exports = {

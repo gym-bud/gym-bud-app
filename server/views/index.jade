@@ -3,10 +3,13 @@ html
       h1 gym bud home 
       if user
          p Logged in as: #{user.first_name} #{user.last_name}
+         if user.isSystemAdmin()
+            p I AM AN ADMIN
          a(href="/logout") logout
       else
          a(href="/login") login
          br
          a(href="/register") register
+
 
 
