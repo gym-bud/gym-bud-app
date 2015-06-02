@@ -1,11 +1,17 @@
 html
    body
-      h1 gym bud home 
+
+      h1 gymbud home 
+      p.green #{successMessage}
+      p.red #{errorMessage}
+
       if user
-         p Logged in as: #{user.first_name} #{user.last_name}
-         if user.isSystemAdmin()
-            p I AM AN ADMIN
+         p Logged in as: #{user._firstname} #{user._lastname}
+         if isAdmin
+            p you are a systemAdmin
          a(href="/logout") logout
+         br
+         a(href="/organization") create an organization
       else
          a(href="/login") login
          br

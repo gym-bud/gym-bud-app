@@ -16,7 +16,7 @@ var ensureAuthenticated = require('./controllers/authentication').ensureAuthenti
 passport.use( userAuthentication );
 
 /* bouncer */
-var bouncer = require('./controllers/bouncer')( 10000, 6000000, 2 );
+var bouncer = require('./controllers/bouncer')( 10000, 6000000, 5 );
 
 /* controllers */
 var site = require('./controllers/site');
@@ -45,19 +45,35 @@ app.use('/static', express.static(__dirname + '/build/static'))
    .use(passport.session());
 
 
-
-
-
 /* login routes */
 app.get( '/login', site.login );
-app.post( '/login', bouncer.block, passport.authenticate('local'), site.loginSuccess, site.loginFailure );
+app.post( '/login', 
+   bouncer.block, 
+   passport.authenticate('local'), 
+   site.redirectIndex,
+   site.loginError
+);
 app.get( '/logout', site.logoutUser );
+
 app.get( '/register', site.register );
-app.post( '/register', site.registerUser, passport.authenticate('local'), site.loginSuccess, site.registerFailure );
+app.post( '/register', 
+   site.registerUser, 
+   passport.authenticate('local'), 
+   site.redirectIndex,
+   site.registerError
+);
+
+app.get( '/organization',
+   site.organization
+);
+app.post( '/organization', 
+   site.createOrganization, 
+   site.redirectIndex,
+   site.organizationError
+);
 
 /* money route */
 app.get( '/', site.index );
-app.get( '/error', site.error );
 
 //app.get( '/adminOnly', ensureUser, ensureAdmin, site.admin );
 

@@ -16,43 +16,40 @@ function User( id, email, password, firstname, lastname ) {
    this._password = password;
    this._firstname = firstname;
    this._lastname = lastname;
+
 }
 
 /**
  *
  * isSystemAdmin :: User -> Boolean Promise
  */
-User.prototype.isSystemAdmin = function() {
-
-   console.log('isSystemAdmin? ' + this._id);
+function isSystemAdmin( user ) {
 
    return knex
    .from('user')
    .innerJoin('system_admin', 'user.id', 'system_admin.user_id')
-   .where({ 'user.id' : this._id })
+   .where({ 'user.id' : user._id })
    .then( function( results ) {
       
       if( results.length > 0 ) {
-
          return true;
-
       } else {
-
-         throw new Error('No admin rights');
+         return false;
       }
+
    });
 
 }
 
 /**
  *
- * validateEmail :: String -> Promise String
+ * validateEmail :: String (email) -> Promise String (email)
  */
 function validateEmail( email ) {
 
    var d = Q.defer();
 
-   if( email.search(emailRegex) >= 0 ) {
+   if( email.indexOf(' ') < 0 && emailRegex.test(email) ) {
 
       d.resolve( email );
 
@@ -67,7 +64,7 @@ function validateEmail( email ) {
 
 /**
  *
- * validatePassword :: String -> Promise String
+ * validatePassword :: String (password) -> Promise String (password)
  */
 function validatePassword( password ) {
 
@@ -76,13 +73,9 @@ function validatePassword( password ) {
    var d = Q.defer();
 
    if( password.length > minPasswordLength ) {
-   
       d.resolve( bcrypt.hashSync(password) );
-
    } else {
-
       d.reject( new Error('Invalid password: ' + password) );
-
    }
 
    return d.promise;
@@ -216,7 +209,7 @@ function removeAllUsers() {
 function extractUser( dbResult ) {
 
    if( dbResult.length === 0 ) {
-      throw new Error('User with id: ' + userid + ' does not exist');
+      throw new Error('User extraction failed');
    }
 
    return new User(
@@ -240,7 +233,6 @@ function getUserById( userid ) {
    .where({ 'id': userid })
    .then( extractUser )
    .catch( function( err ) {
-
       throw new Error('User with id: ' + userid + ' does not exist');
    });
 
@@ -268,6 +260,7 @@ module.exports = {
    getUserByEmail: getUserByEmail,
    getUserById: getUserById,
    createUser: createUser,
-   makeAdminIfEmail: makeAdminIfEmail
+   makeAdminIfEmail: makeAdminIfEmail,
+   isSystemAdmin: isSystemAdmin,
 };
 

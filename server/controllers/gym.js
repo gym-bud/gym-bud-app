@@ -1,53 +1,17 @@
 var Q = require('q');
-var user = require('../controllers/user');
 
-/*
- * Gym
+/**
  *
- * id
- *
- * gymName
- * gymPhysicalAddress
- * gymPhoneNumber
- * gymEmailAddress
+ * @constructor
  */
-var gyms = [];
-var nextGymId = 0;
+function Gym( id, name, address, phoneNumber, email, urlName ) {
 
-/*
- * Gym Group
- *
- * id
- * gymGroupName
- *
- */
-var gymGroups = [];
-var nextGymGroupId = 0; 
-
-/*
- * Gym Group Admins
- *
- * id
- * gymGroupId
- * userId
- */
-var gymGroupAdmins = [];
-var nextGymGroupAdminId = 0;
-
-/*
- * Gym User Permission
- *
- * id
- * userId
- * gymId
- * roleId
- */
-var gymUserPermissions = [];
-var nextGymUserPermissionId = 0;
-
-var regexGymAddress = /.*/;
-var regexGymName = /.*/;
-var regexGymPhoneNumber = /.*/;
+   this._id = id;
+   this._name = name;
+   this._address = address;
+   this._phoneNumber = phoneNumber;
+   this._email = email;
+}
 
 /**
  * A gym group is created by a user (who will be the admin)

@@ -1,0 +1,14 @@
+html
+   body
+      h1 gym bud login
+      p #{errorMessage}
+
+      br
+      a(href="/") home
+      br
+      form(action="/organization" method="post") 
+         input(type="text" name="name" value=organizationName || '' placeholder="email") 
+         br
+         input(type="text" name="url" placeholder="organization url")
+         br
+         input(type="submit" value="create")

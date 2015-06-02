@@ -1,4 +1,5 @@
 var userController = require('./user');
+var organizationController = require('./organization');
 var passport = require('passport');
 
 /**
@@ -20,19 +21,38 @@ function register( req, res ) {
 /**
  *
  */
-function loginSuccess( req, res ) {
+function organization( req, res ) {
 
+   res.render('organization');
+}
+
+/**
+ *
+ */
+function organizationError( err, req, res ) {
+
+   res.render('organization', {
+      organizationName: req.body.organizationName, 
+      organizationUrl: req.body.organizationUrl,
+      errorMessage: err
+   });
+}
+
+/**
+ *
+ */
+function redirectIndex( req, res ) {
    res.redirect('/');
 }
 
 /**
  *
  */
-function loginFailure( err, req, res, next ) {
+function loginError( err, req, res, next ) {
    
    res.render( 'login', { 
       email: req.body.email, 
-      error: err 
+      errorMessage: err 
    });
 
 }
@@ -42,31 +62,35 @@ function loginFailure( err, req, res, next ) {
  */
 function index( req, res, next ) {
 
-   res.render('index', { user: req.user });
+   if( req.user ) {
+
+      return userController
+      .isSystemAdmin( req.user )
+      .then( function( isAdmin ) {
+         res.render('index', { 
+            user: req.user, 
+            successMessage: req.successMessage,
+            isAdmin: isAdmin 
+         });
+      })
+      .nodeify();
+
+   } else {
+
+      res.render('index', { 
+         user: req.user, 
+         successMessage: req.successMessage,
+         isAdmin: false 
+      });
+
+   }
+
 }
 
 /**
  *
  */
-function error( req, res, next ) {
-
-
-   res.redirect('index');
-}
-
-/**
- *
- */
-function secret( req, res ) {
-
-   res.render('user', { user: req.user });
-
-}
-
-/**
- *
- */
-function registerFailure( err, req, res, next ) {
+function registerError( err, req, res, next ) {
    
    res.render( 'register', { 
       error: err, 
@@ -97,15 +121,34 @@ function logoutUser( req, res ) {
    res.redirect('/');
 }
 
+/**
+ *
+ */
+function createOrganization( req, res, next ) {
+
+   console.log('create org', req.body.name);
+
+   organizationController
+   .createOrganization(
+      req.body.name,
+      req.body.url
+   )
+   .nodeify( next );
+}
+
+
+
 module.exports = {
+   redirectIndex: redirectIndex,
    registerUser: registerUser,
    logoutUser: logoutUser,
    login: login,
    register: register,
-   registerFailure: registerFailure,
-   loginSuccess: loginSuccess,
-   loginFailure: loginFailure,
+   registerError: registerError,
+   loginError: loginError,
    index: index,
-   error: error 
+   organization: organization,
+   createOrganization: createOrganization,
+   organizationError: organizationError
 };
 

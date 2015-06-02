@@ -15,7 +15,7 @@ function bouncer( min, max, free ) {
    var whiteList = [];
 
 
-   while( free-- ) delays.push( 0 );
+   while( free-- ) { delays.push( 0 ); }
    delays.push( min );
    delays.push( min );
 
