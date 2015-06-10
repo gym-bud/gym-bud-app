@@ -14,7 +14,7 @@ gulp.task( 'start', ['lint'], function() {
 
    nodemon({
       script: 'index.js',
-      ext: 'js jade',
+      ext: 'js jade html scss',
       ignore: ['**/*.spec.js'],
       tasks: ['lint'],
       env: { 'NODE_ENV': 'development' }
