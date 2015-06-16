@@ -5,9 +5,16 @@ html
       p.green #{successMessage}
       p.red #{errorMessage}
 
-      if user
-         p Logged in as: #{user._firstname} #{user._lastname}
-         if isAdmin
+      h2 Users
+
+      ul
+      each user in users
+         li 
+            = user.name
+
+      if currentLogin 
+         p Logged in as: #{currentLogin.name} 
+         if currentLogin.isAdmin
             p you are a systemAdmin
          a(href="/logout") logout
          br

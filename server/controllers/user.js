@@ -1,7 +1,7 @@
 var Q = require('q');
 var bcrypt = require('bcrypt-nodejs');
 var _ = require('lodash');
-var knex = require('./db').knex;
+var sequelize = require('./db');
 
 var minPasswordLength = 6;
 var emailRegex = /[A-Za-z0-9._%+-]+\@[A-Za-z]*\.[A-Za-z]*\.*[A-Za-z]*/;

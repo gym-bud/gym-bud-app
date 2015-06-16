@@ -1,5 +1,6 @@
-var userController = require('./user');
-var organizationController = require('./organization');
+//var userController = require('./user');
+//var organizationController = require('./organization');
+var user = require('../models/user.js');
 var passport = require('passport');
 
 /**

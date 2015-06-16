@@ -1,9 +1,9 @@
 {
    "defaultEnvironment": "development",
    "development": {
-      "GB_MYSQL_HOST": "0.0.0.0",
+      "GB_MYSQL_HOST": "localhost",
       "GB_MYSQL_USERNAME": "testroot",
       "GB_MYSQL_PASSWORD": "pass",
-      "GB_MYSQL_DATABASE": "gb_test"
+      "GB_MYSQL_DATABASE": "sequelize_test"
    }
 }

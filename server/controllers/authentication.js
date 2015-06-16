@@ -1,16 +1,15 @@
 var passport = require('passport');
 var localStrategy = require('passport-local').Strategy;
-
 var bcrypt = require('bcrypt-nodejs');
 
-var userController = require('../controllers/user');
+var models = require('../models');
 
 /**
  * @override passport's internal serialize user
  */
 passport.serializeUser( function( user, done ) {
 
-   done(null, user._id);
+   done(null, user.id);
 
 });
 
@@ -19,9 +18,21 @@ passport.serializeUser( function( user, done ) {
  */
 passport.deserializeUser( function( id, done ) {
 
+
+   models.User.findOne({ where: { 'id': id } })
+   .then( function( user ) {
+
+      console.log(user);
+      return user;
+
+   })
+   .nodeify( done );
+
+/*
    userController.getUserById( id )
    .then( function( user ) { return user; } )
    .nodeify( done );
+*/
 
 });
 
@@ -34,15 +45,30 @@ function userAuthentication( email, password, done ) {
 
    console.log('LOGIN ATTEMPT: ' + email + ' [ ' + password + ' ]' );
 
-   return userController
-   .getUserByEmail( email )
+   models.User.findOne({ where: { 'email': email }})
    .then( function( user ) {
 
-      if( !bcrypt.compareSync(password, user._password) ) {
+      console.log(user);
+
+      if( !user ) {
+
+         throw new Error('User with that email does not exist');
+
+      }
+
+      if( !bcrypt.compareSync(password, user.passwordHash) ) {
          throw new Error('Password does not match.');
       }
 
       return user;
+
+   })
+   /*
+
+   return userController
+   .getUserByEmail( email )
+   .then( function( user ) {
+
 
    })
    .catch( function( err ) {
@@ -51,6 +77,7 @@ function userAuthentication( email, password, done ) {
       throw new Error('Login name and password do not match');
 
    })
+   */
    .nodeify( done );
 
 }
