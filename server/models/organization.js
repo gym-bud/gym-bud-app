@@ -13,7 +13,10 @@ module.exports = function( sequelize, DataTypes ) {
          type: DataTypes.STRING,
          allowNull: false,
          validate: {
-            is: /^[a-z0-9\s]+$/i 
+            is: {
+               args: /^[a-z0-9\s]+$/i,
+               msg: 'Business organization name must only contain alphanumeric characters'
+            }
          },
          set: function( val ) {
             
@@ -26,7 +29,10 @@ module.exports = function( sequelize, DataTypes ) {
          unique: true,
          allowNull: false,
          validate: {
-            is: /^[a-z0-9\-]+$/i 
+            is: {
+               args: /^[a-z0-9\-]+$/i,
+               msg: 'Custom URL must be in the form a-valid-url (e.g. gymbud.rocks/a-valid-url)'
+            }
          },
          set: function( val ) {
             

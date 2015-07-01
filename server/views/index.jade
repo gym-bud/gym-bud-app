@@ -2,23 +2,14 @@ html
    body
 
       h1 gymbud home 
-      p.green #{successMessage}
-      p.red #{errorMessage}
 
-      h2 Users
-
-      ul
-      each user in users
-         li 
-            = user.name
-
-      if currentLogin 
-         p Logged in as: #{currentLogin.name} 
-         if currentLogin.isAdmin
-            p you are a systemAdmin
+      if currentUser 
+         if currentUser.isAdmin
+            p Logged in as: #{currentUser.name} (#{currentUser.email}, isAdmin) 
+         else 
+            p Logged in as: #{currentUser.name} (#{currentUser.email}) 
          a(href="/logout") logout
          br
-         a(href="/organization") create an organization
       else
          a(href="/login") login
          br

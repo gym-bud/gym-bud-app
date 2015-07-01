@@ -111,7 +111,6 @@ function registerUser( req, res, next ) {
       req.body.firstName, 
       req.body.lastName 
    )
-   .then( userController.makeAdminIfEmail('ebuckthal@gmail.com') )
    .nodeify( next );
 }
 
@@ -136,8 +135,6 @@ function createOrganization( req, res, next ) {
    )
    .nodeify( next );
 }
-
-
 
 module.exports = {
    redirectIndex: redirectIndex,

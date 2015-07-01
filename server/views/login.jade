@@ -1,7 +1,10 @@
 html
    body
       h1 gym bud login
-      p #{errorMessage}
+      if errors 
+         ul
+            each error in errors
+               li=error.message
 
       br
       a(href="/") home

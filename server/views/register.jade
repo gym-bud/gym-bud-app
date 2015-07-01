@@ -1,8 +1,10 @@
 html
    body
       h1 gym bud register 
-      if error 
-         p=error
+      if errors 
+         ul
+            each error in errors
+               li=error.message
 
       br
       a(href="/") home
@@ -13,8 +15,6 @@ html
          br
          input(type="password" name="password" placeholder="password")
          br
-         input(type="text" name="firstName" value=firstName || '' placeholder="first name") 
-         br
-         input(type="text" name="lastName" value=lastName || '' placeholder="last name") 
+         input(type="text" name="name" value=fname || '' placeholder="name") 
          br
          input(type="submit" value="register")

@@ -1,7 +1,10 @@
 html
    body
-      h1 gym bud login
-      p #{errorMessage}
+      h1 gym bud new organization 
+      if errors 
+         ul
+            each error in errors
+               li=error.message
 
       br
       a(href="/") home
@@ -9,6 +12,6 @@ html
       form(action="/organization" method="post") 
          input(type="text" name="name" value=organizationName || '' placeholder="email") 
          br
-         input(type="text" name="url" placeholder="organization url")
+         input(type="text" name="urlName" placeholder="organization url")
          br
          input(type="submit" value="create")

@@ -22,7 +22,6 @@ passport.deserializeUser( function( id, done ) {
    models.User.findOne({ where: { 'id': id } })
    .then( function( user ) {
 
-      console.log(user);
       return user;
 
    })
@@ -48,12 +47,8 @@ function userAuthentication( email, password, done ) {
    models.User.findOne({ where: { 'email': email }})
    .then( function( user ) {
 
-      console.log(user);
-
       if( !user ) {
-
          throw new Error('User with that email does not exist');
-
       }
 
       if( !bcrypt.compareSync(password, user.passwordHash) ) {

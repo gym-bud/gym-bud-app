@@ -7,6 +7,8 @@ var bodyParser = require('body-parser');
 var session = require('express-session');
 var url = require('url');
 
+var models = require('./models');
+
 /* passport */
 var passport = require('passport');
 var userAuthentication = require('./controllers/authentication').userAuthentication;
@@ -40,6 +42,7 @@ app.use('/static', express.static(__dirname + '/build/static'))
 // routes
 var routes = require('./routes');
 var login = require('./routes/login');
+var organization = require('./routes/organization');
 
 app.use( '/', login );
 app.use( '/', routes );
@@ -55,8 +58,10 @@ app.use( function(req, res, next) {
    res.status(404).render('404', { url: req.originalUrl });
 });
 
-app.listen( 3000, function() {
-   console.log('listening on port 3000');
+models.sequelize.sync({ force: true }).then( function() {
+   return app.listen( 3000, function() {
+      console.log('listening on port 3000');
+   });
 });
 
 module.exports = app;

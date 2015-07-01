@@ -1,0 +1,19 @@
+html
+   body
+      h1 gymbud new organization
+
+      if errors 
+         ul
+            each error in errors
+               li=error.message
+
+      br
+      a(href="/") home
+      br
+
+      form(action="/organization" method="post")
+            input(type="text" name="name" value=name || '' placeholder="business name")
+            br
+            input(type="text" name="url name" value=name || '' placeholder="url name")
+            br
+            input(type="submit" value="create new organization")

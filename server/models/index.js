@@ -4,7 +4,9 @@ var path = require('path');
 
 var Sequelize = require('sequelize');
 
-var env = process.env.NODE_ENV
+if( !process.env.NODE_ENV ) { console.error('Environment is not defined, defaulting to development') }
+var env = process.env.NODE_ENV || 'development';
+
 var config = require(__dirname + '/../config/sequelize.json')[env];
 
 var db = {};

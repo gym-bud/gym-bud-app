@@ -1,3 +1,4 @@
+var bcrypt = require('bcrypt-nodejs');
 
 module.exports = function( sequelize, DataTypes ) {
 
@@ -13,7 +14,10 @@ module.exports = function( sequelize, DataTypes ) {
          type: DataTypes.STRING,
          allowNull: false,
          validate: {
-            is: /^[a-z0-9\s]+$/i 
+            is: {
+               args: /^[a-z0-9\-\s]+$/i,
+               msg: 'Name must only include alphanumeric characters'
+            }
          },
          set: function( val ) {
             
@@ -25,8 +29,9 @@ module.exports = function( sequelize, DataTypes ) {
       email: {
          type: DataTypes.STRING,
          allowNull: false,
+         unique: true,
          validate: {
-            isEmail: true
+            isEmail: { msg: 'Invalid email' } 
          }
 
       },
@@ -52,10 +57,9 @@ module.exports = function( sequelize, DataTypes ) {
          validate: {
             isLongEnough: function( val ) {
                if ( val.length < 7 ) {
-                  throw new Error('Please choose a longer password');
+                  throw new Error('Password must be at least 7 characters');
                }
             }
-
          }
       }
 
