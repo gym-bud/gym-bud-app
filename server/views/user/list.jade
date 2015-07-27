@@ -1,0 +1,13 @@
+extends ../layout.jade
+
+block title
+   title gym-bud users 
+
+block content
+   h1 gym-bud users 
+   if users && users.length
+      ul
+         each user in users 
+            li #{user.getName()}
+   else
+      p There are no users 

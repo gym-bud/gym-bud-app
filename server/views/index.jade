@@ -1,19 +1,4 @@
-html
-   body
+extends ./layout.jade 
 
-      h1 gymbud home 
-
-      if currentUser 
-         if currentUser.isAdmin
-            p Logged in as: #{currentUser.name} (#{currentUser.email}, isAdmin) 
-         else 
-            p Logged in as: #{currentUser.name} (#{currentUser.email}) 
-         a(href="/logout") logout
-         br
-      else
-         a(href="/login") login
-         br
-         a(href="/register") register
-
-
-
+block content
+   h1 gym-bud home

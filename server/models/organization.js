@@ -1,3 +1,4 @@
+var Q = require('q');
 
 module.exports = function( sequelize, DataTypes ) {
 
@@ -41,6 +42,57 @@ module.exports = function( sequelize, DataTypes ) {
       }
 
    }, {
+      
+      instanceMethods: {
+
+         getName: function() {
+            return this.get('name');
+         },
+
+         getUrl: function() {
+            return '/' + this.get('urlName');
+         },
+
+         isAdmin: function( user ) {
+
+            if( !user ) { 
+               return Q.fcall(function() {
+                  return false; 
+               });
+            }
+
+            return this.getAdministrators({
+               where: { id: user.getId() }
+            }).then( function( admins ) {
+
+               return admins.length > 0;
+            })
+         },
+
+         isCreator: function( user ) {
+
+            if( !user ) { 
+               return Q.fcall(function() {
+                  return false; 
+               });
+            }
+
+            return this.getCreator()
+            .then(function( creator ) {
+               return user.getId() == creator.getId();
+            });
+         },
+
+         getRemoveAdminUrl: function( user ) {
+
+            return '/' + this.get('urlName') + '/admins/' + user.getId() + '/delete';
+         },
+
+         getAddAdminUrl: function() {
+
+            return '/' + this.get('urlName') + '/admins';
+         },
+      },
 
       classMethods: {
 
@@ -49,6 +101,15 @@ module.exports = function( sequelize, DataTypes ) {
             Organization.belongsTo( models.User, { 
                as: 'Creator', 
                foreignKey: 'creatorId' 
+            });
+
+            Organization.belongsToMany( models.User, { 
+               through: 'OrganizationAdministrator',
+               as: { singular: 'Administrator', plural: 'Administrators' }
+            });
+
+            Organization.hasMany( models.Gym, { 
+               as: { singular: 'Gym', plural: 'Gyms' }
             });
 
          }

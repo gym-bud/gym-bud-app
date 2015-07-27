@@ -35,6 +35,16 @@ passport.deserializeUser( function( id, done ) {
 
 });
 
+function ensureAuthenticated( req, res, next ) {
+
+   if( req.isAuthenticated() ) {
+      return next();
+   } else {
+      res.redirect('/');
+   }
+
+}
+
 
 /**
  * local authentication strategy
@@ -78,6 +88,7 @@ function userAuthentication( email, password, done ) {
 }
 
 module.exports = {
+   ensureAuthenticated: ensureAuthenticated,
    userAuthentication: new localStrategy({ 
       usernameField: 'email', 
       passwordField: 'password' 

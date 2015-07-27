@@ -9,7 +9,7 @@ var models = require('../models');
 
 router.get( '/login', function( req, res ) {
 
-   res.render('login');
+   res.render('auth/login');
 
 });
 
@@ -29,7 +29,7 @@ router.post( '/login',
    // login failure
    function( err, req, res, next ) {
 
-      res.render('login', {
+      res.render('auth/login', {
          email: req.body.email,
          errors: [err]
       });
@@ -45,7 +45,7 @@ router.get( '/logout', function( req, res ) {
 
 router.get( '/register', function( req, res ) {
 
-   res.render('register');
+   res.render('auth/register');
 
 });
 
@@ -56,19 +56,22 @@ router.post( '/register', function( req, res, next ) {
    return models.User.create({ 
       email: req.body.email, 
       name: req.body.name,
-      isAdmin: (req.body.email == 'ebuckthal@gmail.com') ? true : false,
+      isAdmin: false,
       password: req.body.password
    })
    .nodeify( next );
    
 }, passport.authenticate('local')
+
  , function( req, res ) {
 
    res.redirect('/');
 
 }, function( err, req, res, next ) {
 
-   res.render( 'register', {
+   res.render( 'auth/register', {
+      email: req.body.email,
+      name: req.body.name,
       errors: err.errors
    });
 

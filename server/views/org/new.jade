@@ -1,0 +1,13 @@
+extends ../layout.jade
+
+block title
+   title gym-bud new organization
+
+block content 
+   h1 gymbud new organization
+   form(action="/organization/new" method="post")
+         input(type="text" name="name" value=name || '' placeholder="business name")
+         br
+         input(type="text" name="urlName" value=urlName || '' placeholder="url name")
+         br
+         input(type="submit" value="create new organization")

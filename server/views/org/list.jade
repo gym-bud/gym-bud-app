@@ -1,0 +1,19 @@
+extends ../layout.jade
+
+block title
+   title gym-bud organizations
+
+block content
+   h1 gym-bud organizations
+   if orgs && orgs.length
+      ul
+         each org in orgs
+            li
+               a(href=org.getUrl())= org.getName()
+   else
+      p There are no organizations
+
+   if user
+      a(href="/organization/new") create an organization
+   else
+      p #[a(href="/login") login] to create an organization

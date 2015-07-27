@@ -31,6 +31,29 @@ module.exports = function( sequelize, DataTypes ) {
          allowNull: false,
          unique: true,
          validate: {
+            // this is required for custom error message on unique validation
+            isUnique: function( email, done ) {
+               User.find({ where: { email: email }})
+               .then(function( user ) {
+
+                  if( user ) { 
+                     done(new Error('Email already exists in our system.')); 
+                  }
+
+                  done();
+
+               }, function( err ) {
+
+                  if( err ) {
+                     done(err);
+                  }
+
+                  done();
+               
+               });
+
+            },
+
             isEmail: { msg: 'Invalid email' } 
          }
 
@@ -65,11 +88,39 @@ module.exports = function( sequelize, DataTypes ) {
 
    }, {
 
+      instanceMethods: {
+
+         getName: function() {
+            return this.get('name');
+         },
+         getId: function() {
+            return this.get('id');
+         }
+
+      },
+
       classMethods: {
          
          associate: function( models ) {
 
             User.hasMany( models.Organization, { foreignKey: 'creatorId' });
+
+/*
+            User.belongsToMany( models.Organization, { 
+               through: 'OrganizationAdministrator',
+               as: 'Organization'
+            });
+
+            User.belongsToMany( models.Gym, { 
+               through: models.GymEmployee,
+               as: 'Employer'
+            });
+            
+            User.belongsToMany( models.Gym, { 
+               through: models.GymMember,
+               as: 'Member'
+            });
+*/
 
          }
 

@@ -1,0 +1,14 @@
+extends ../layout.jade
+
+block title
+   title gym-bud login
+
+block content
+   h1 gym-bud login
+   form(action="/login" method="post") 
+      input(type="text" name="email" value=email || '' placeholder="email") 
+      br
+      input(type="password" name="password" placeholder="password")
+      br
+      input(type="submit" value="log in")
+

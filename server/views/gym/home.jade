@@ -1,0 +1,17 @@
+extends ../layout.jade
+
+block title
+   title gym-bud - #{gym.getName()}
+
+block content
+   h2 #[a(href=org.getUrl()) #{org.getName()}] / #[a(href=gym.getUrl(org)) #{gym.getName()}]
+
+   if employees && employees.length
+      ul 
+         each emp in employees 
+            li=emp.getName() + ' (' + emp.GymEmployee.getJobTitle() + ')'
+
+   if members && members.length
+      ul 
+         each member in members 
+            li=member.getName() + ' (' + member.GymMember.getType() + ')'

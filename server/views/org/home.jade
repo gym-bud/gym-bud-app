@@ -1,0 +1,33 @@
+extends ../layout.jade
+
+block title
+   title gym-bud - #{org.getName()}
+
+block content
+   h1 #{org.getName()} (#{org.getUrl()})
+
+   if isOrgAdmin 
+
+      if administrators && administrators.length
+         p Administrators
+         ul
+            each admin in administrators 
+               li #{admin.getName()} 
+                  if orgCreatorId != admin.getId() 
+                     a(href=org.getRemoveAdminUrl(admin)) delete
+                  else 
+                     span (creator)
+
+      form(action=org.getAddAdminUrl() method="post") 
+         input(type="text" name="email" value=email || '' placeholder="email") 
+         input(type="submit" value="add admin")
+
+
+   p Gyms
+   if gyms && gyms.length
+      ul 
+         each gym in gyms
+            li #[a(href=gym.getUrl(org)) #{gym.getName()}] 
+
+   if isOrgAdmin 
+      a(href=org.getUrl() + '/new') create a gym

@@ -1,9 +1,22 @@
-var models = require('../models');
+
 var express = require('express');
 var router = express.Router();
+var models = require('../models');
+var ensureAuthenticated = require('../controllers/authentication').ensureAuthenticated;
 
-models.User.findAll({
+router.get( '/users', 
+   function( req, res ) {
 
-}).then( function( users ) {
+      models.User.findAll({
 
-});
+      }).then(function( data ) {
+         
+         res.render('user/list', {
+            users: data
+         });
+
+      });
+   }
+)
+
+module.exports = router;
