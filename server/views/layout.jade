@@ -13,7 +13,7 @@ html
             a(href="/organizations") organizations
             |  
             if user
-               span Logged in as: #{user.name} (#{user.email}, isAdmin = #{user.isAdmin} ) 
+               span Logged in as: #[a(href="/me") #{user.name}] (#{user.email}, isAdmin = #{user.isAdmin} ) 
                |  
                a(href="/logout") logout
             else
@@ -25,7 +25,13 @@ html
          if errors 
             ul
                each error in errors
-                  li=error.message
+                  li=(error && error.message) || error
+
+      block msgs 
+         if msgs 
+            ul
+               each msg in msgs 
+                  li=msg
 
       block content
          h1 gym-bud

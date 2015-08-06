@@ -50,18 +50,19 @@ var params = require('./routes/params');
 var routers = [
    require('./routes'),
    require('./routes/login'),
+   require('./routes/me'),
+   require('./routes/users'),
    require('./routes/organization'),
-   require('./routes/gym'),
-   require('./routes/users')
+   require('./routes/gym')
 ];
 
 
+// apply param function to each sub router
 routers.forEach( function( router ) {
    router.param('orgUrl', params.resolveOrgUrl);
    router.param('gymUrl', params.resolveGymUrl);
 
    app.use( '/', router );
-
 })
 
 // if an error was thrown with next, catch it here

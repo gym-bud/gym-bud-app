@@ -95,6 +95,9 @@ module.exports = function( sequelize, DataTypes ) {
          },
          getId: function() {
             return this.get('id');
+         },
+         comparePassword: function(pass) {
+            return bcrypt.compareSync(pass, this.passwordHash);
          }
 
       },
@@ -105,7 +108,9 @@ module.exports = function( sequelize, DataTypes ) {
 
             User.hasMany( models.Organization, { foreignKey: 'creatorId' });
 
-/*
+/************************************ 
+ * I forget why this is commented out
+ *
             User.belongsToMany( models.Organization, { 
                through: 'OrganizationAdministrator',
                as: 'Organization'

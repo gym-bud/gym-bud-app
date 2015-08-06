@@ -1,0 +1,27 @@
+extends ../layout.jade
+
+block title
+   title gym-bud - #{user.get('name')}
+
+block content
+   h2 profile
+   form(action="/me" method="post") 
+      input(type="text" name="name" value=user.name || '')
+      br
+      input(type="text" name="email" value=user.email || '')
+      br
+      input(type="submit" value="update profile settings")
+
+   form(action="/me/password" method="post")
+      input(type="password" name="oldPass" placeholder="old password")
+      br
+      input(type="password" name="newPass" placeholder="new password")
+      br
+      input(type="password" name="newPassConfirm" placeholder="confirm new password")
+      br
+      input(type="submit" value="update password")
+
+   form(action="/me/delete" method="post") 
+      input(type="submit" value="delete profile")
+
+

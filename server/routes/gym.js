@@ -22,7 +22,25 @@ router.get( '/:orgUrl/:gymUrl', function( req, res, next ) {
 
 });
 
-router.get( '/:orgUrl/:gymUrl/join', function( req, res, next ) {
+router.get( '/:orgUrl/:gymUrl/membership/join', function( req, res, next ) {
+
+   Q.all([
+      req.gym.getEmployees(),
+      req.gym.getMembers()
+   ])
+   .spread(function(employees, members) {
+
+      res.render('gym/home', {
+         employees: employees,
+         members: members
+      });
+
+   })
+   .nodeify(next);
+
+});
+
+router.get( '/:orgUrl/:gymUrl/membership/join', function( req, res, next ) {
 
    Q.all([
       req.gym.getEmployees(),
